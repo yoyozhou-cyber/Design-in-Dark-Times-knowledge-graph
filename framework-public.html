@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>《黑暗时代的设计》— 公共领域作为显现空间</title>
+  <style>
+    :root {
+      --ink: #171411;
+      --muted: #6d6258;
+      --paper: #f8f2e7;
+      --paper-deep: #ece1cf;
+      --line: #d8c8af;
+      --red: #b9422f;
+      --blue: #245f73;
+      --green: #4d6f48;
+      --gold: #c2872d;
+      --white: #fffaf0;
+      --shadow: 0 18px 50px rgba(55, 38, 19, .14);
+
+      --font-body: "Songti SC", "Noto Serif CJK SC", Georgia, serif;
+      --font-display: "PingFang SC", "Microsoft YaHei", sans-serif;
+      --bg: radial-gradient(circle at 22% 12%, rgba(194, 135, 45, .18), transparent 28rem),
+            linear-gradient(135deg, #fbf6ec 0%, #efe1ca 100%);
+      --surface: rgba(255, 250, 240, .62);
+      --surface-strong: rgba(255, 250, 240, .72);
+      --bar-bg: rgba(248, 242, 231, .95);
+      --ink-soft: #3d332b;
+      --ink-soft-2: #44392f;
+      --tint-accent: rgba(194, 135, 45, .12);
+      --tint-accent-strong: rgba(194, 135, 45, .15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: var(--font-body);
+    }
+
+    button { font: inherit; color: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 44px;
+      isolation: isolate;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 52vh;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 32px;
+      align-items: end;
+      padding: 48px 0 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--red);
+      font: 700 14px/1.3 var(--font-display);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: .98;
+      font-weight: 900;
+    }
+
+    .hero .lede {
+      margin: 22px 0 0;
+      max-width: 720px;
+      color: var(--ink-soft);
+      font-size: 21px;
+      line-height: 1.7;
+    }
+
+    .thesis {
+      border-left: 7px solid var(--red);
+      background: var(--surface-strong);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .thesis strong {
+      display: block;
+      margin-bottom: 12px;
+      font: 800 18px/1.2 var(--font-display);
+    }
+
+    .thesis span {
+      display: block;
+      color: var(--ink-soft-2);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    /* Tabs */
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      margin: 12px 0 28px;
+      border: 1px solid var(--line);
+      background: var(--bar-bg);
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .tab {
+      min-height: 52px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      font: 800 16px/1.2 var(--font-display);
+      pointer-events: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab[aria-selected="true"] {
+      color: var(--white);
+      background: var(--ink);
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+      animation: rise .36s ease both;
+    }
+
+    .panel.active { display: block; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      margin: 0 0 18px;
+      font: 900 30px/1.15 var(--font-display);
+    }
+
+    .section-lead {
+      margin: 0 0 24px;
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    /* Grid & Note cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .note {
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      position: relative;
+    }
+
+    .note h3 {
+      margin: 0 0 12px;
+      font: 900 21px/1.2 var(--font-display);
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--ink-soft-2);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    /* Split / Selector */
+    .split {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .city-buttons {
+      display: grid;
+      gap: 10px;
+    }
+
+    .city-buttons button {
+      min-height: 58px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      cursor: pointer;
+      text-align: left;
+      font: 800 17px/1.2 var(--font-display);
+    }
+
+    .city-buttons button.active {
+      color: var(--white);
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .result {
+      padding: 28px;
+      min-height: 280px;
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .result .label {
+      color: var(--red);
+      font: 800 14px/1.2 var(--font-display);
+    }
+
+    .result h3 {
+      margin: 10px 0 12px;
+      font: 900 28px/1.2 var(--font-display);
+    }
+
+    .result p {
+      margin: 0 0 12px;
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    /* Matrix */
+    table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font: 16px/1.5 var(--font-body);
+    }
+
+    .matrix th, .matrix td {
+      padding: 12px 10px;
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .matrix th {
+      background: var(--surface-strong);
+      font: 800 14px/1.3 var(--font-display);
+    }
+
+    .matrix td:first-child { font-weight: 700; }
+    .matrix tbody tr.row-hi { background: var(--tint-accent); }
+
+    /* Story Card */
+    .story {
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      padding: 24px 28px;
+      margin: 18px 0;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .story .story-label {
+      color: var(--red);
+      font: 700 13px/1.3 var(--font-display);
+      margin-bottom: 10px;
+    }
+
+    .story h3 {
+      margin: 0 0 14px;
+      font: 900 22px/1.2 var(--font-display);
+    }
+
+    .story p {
+      margin: 0 0 10px;
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .story .story-insight {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      color: var(--blue);
+      font: 700 17px/1.6 var(--font-display);
+    }
+
+    /* Quote Card */
+    .quote {
+      position: relative;
+      padding: 28px 32px 22px;
+      margin: 18px 0;
+      border-left: 4px solid var(--gold);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .quote::before {
+      content: "\201C";
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      color: var(--gold);
+      font: 900 64px/1 var(--font-body);
+      opacity: .35;
+    }
+
+    .quote blockquote {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 19px;
+      line-height: 1.8;
+      font-style: normal;
+    }
+
+    .quote .q-source {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font: 13px/1.4 var(--font-display);
+    }
+
+    /* Source Markers */
+    .src-toggle {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 100;
+      padding: 7px 14px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--bar-bg);
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      font: 12px/1.2 var(--font-display);
+      color: var(--muted);
+      transition: all .2s;
+    }
+
+    .src-toggle:hover { border-color: var(--gold); color: var(--ink); }
+
+    .note[data-source],
+    .story[data-source],
+    .accordion details[data-source],
+    .quote[data-source] {
+      position: relative;
+      padding-left: 26px;
+      border-left: 3px solid var(--line);
+      transition: border-color .2s;
+    }
+
+    .note[data-source]:hover,
+    .story[data-source]:hover,
+    .accordion details[data-source]:hover,
+    .quote[data-source]:hover {
+      border-left-color: var(--blue);
+    }
+
+    [data-source]::after {
+      content: attr(data-source);
+      position: absolute;
+      left: -4px;
+      bottom: calc(100% + 4px);
+      padding: 3px 8px;
+      background: var(--ink);
+      color: var(--white);
+      font: 11px/1.3 var(--font-display);
+      border-radius: 3px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      z-index: 3;
+    }
+
+    [data-source]:hover::after { opacity: 1; }
+
+    body.show-sources .note::before,
+    body.show-sources .story::before,
+    body.show-sources .accordion details::before,
+    body.show-sources .quote::before {
+      content: attr(data-source);
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font: 11px/1.3 var(--font-display);
+    }
+
+    /* Deep Dive Button */
+    .deep-dive-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--muted);
+      cursor: pointer;
+      font: 700 14px/1 var(--font-display);
+      opacity: 0;
+      transition: opacity .2s;
+      z-index: 2;
+    }
+
+    .note:hover .deep-dive-btn,
+    .story:hover .deep-dive-btn,
+    .accordion details:hover .deep-dive-btn,
+    .quote:hover .deep-dive-btn {
+      opacity: .65;
+    }
+
+    .deep-dive-btn:hover { opacity: 1 !important; background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+    /* Deep Dive Popover */
+    .dd-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(23, 20, 17, .35);
+      backdrop-filter: blur(2px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dd-overlay.active { display: flex; }
+
+    .dd-popover {
+      width: min(520px, calc(100% - 32px));
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+    }
+
+    .dd-popover .dd-title {
+      margin: 0 0 6px;
+      font: 900 22px/1.2 var(--font-display);
+    }
+
+    .dd-popover .dd-ctx {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font: 13px/1.5 var(--font-display);
+    }
+
+    .dd-popover textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font: 16px/1.6 var(--font-display);
+      color: var(--ink);
+      background: var(--white);
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    .dd-popover .dd-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dd-popover .dd-submit {
+      padding: 10px 22px;
+      border: 0;
+      border-radius: 4px;
+      background: var(--blue);
+      color: var(--white);
+      cursor: pointer;
+      font: 700 15px/1.3 var(--font-display);
+    }
+
+    .dd-popover .dd-cancel {
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      font: 700 15px/1.3 var(--font-display);
+      color: var(--muted);
+    }
+
+    /* Toast */
+    .dd-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 28px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 6px;
+      font: 14px/1.4 var(--font-display);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+      z-index: 300;
+    }
+
+    .dd-toast.show { opacity: 1; }
+
+    /* Footer */
+    .footer {
+      margin-top: 34px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font: 14px/1.7 var(--font-display);
+    }
+
+    /* Responsive */
+    @media (max-width: 880px) {
+      .hero, .split, .grid { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 28px; }
+      .tabs { position: static; grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: min(100% - 22px, 1180px); padding-top: 18px; }
+      h1 { font-size: 42px; }
+      .hero .lede { font-size: 18px; }
+    }
+  </style>
+</head>
+<body data-theme="warm-paper">
+  <button id="srcToggle" class="src-toggle" title="显示/隐藏出处">显示出处</button>
+  <main class="page">
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <p class="eyebrow">核心框架 3/5</p>
+        <h1 id="title">公共领域</h1>
+        <p class="lede">公共领域是行动和言说展开的空间，是人类事务被光照亮的地方。它不是现代意义上的"政府"或"国家"，而是人们在其中显现自我、被他人看见和倾听的空间。</p>
+      </div>
+      <aside class="thesis">
+        <strong>一句话总论</strong>
+        <span>公共领域的衰落是现代性危机的核心。社会的扩张——经济逻辑对政治领域的殖民——摧毁了公共领域，我们失去了政治存在的空间。</span>
+      </aside>
+    </section>
+
+    <nav class="tabs" aria-label="学习模块">
+      <button class="tab" aria-selected="true" data-tab="features">三重特征</button>
+      <button class="tab" aria-selected="false" data-tab="domains">领域对比</button>
+      <button class="tab" aria-selected="false" data-tab="crisis">衰落危机</button>
+      <button class="tab" aria-selected="false" data-tab="insights">设计启示</button>
+    </nav>
+
+    <div id="features" class="panel active">
+      <h2 class="section-title">公共领域的三重特征</h2>
+      <p class="section-lead">公共领域不是政府，而是显现的空间。它具有三个相互关联的基本特征。</p>
+
+      <div class="split">
+        <div class="city-buttons" aria-label="公共领域特征">
+          <button class="city-btn active" data-feature="appearance">显现性</button>
+          <button class="city-btn" data-feature="reality">实在性</button>
+          <button class="city-btn" data-feature="worldliness">世界性</button>
+        </div>
+        <article class="result" id="featureResult">
+          <div class="label">第一重特征</div>
+          <h3>显现性 (Appearance)</h3>
+          <p>公共领域是显现的空间，是我们不仅作为物种成员，而且作为独特个体被看见的地方。</p>
+          <p>在公共领域中，行动和言说展开，人们展现自己的独特性。没有显现，就没有真正的存在。公共领域是光，它照亮人类事务，赋予它们实在性。</p>
+        </article>
+      </div>
+
+      <figure class="quote" data-source="Public 章节 · 约第261-264页" style="margin-top: 24px;">
+        <blockquote>公共领域是显现的空间，是我们不仅作为物种成员，而且作为独特个体被看见的地方。</blockquote>
+        <figcaption class="q-source">—— 《黑暗时代的设计》p.261-264</figcaption>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('显现性','Public 章节 · 约第261-264页')">?</button>
+      </figure>
+    </div>
+
+    <div id="domains" class="panel">
+      <h2 class="section-title">三个领域的对比</h2>
+      <p class="section-lead">公共领域、私人领域与社会（经济领域）是三个性质不同的领域，它们的混淆是现代危机的根源。</p>
+
+      <table class="matrix">
+        <thead>
+          <tr><th>维度</th><th>公共领域</th><th>私人领域</th><th>社会（经济）</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>核心活动</td>
+            <td>显现和行动</td>
+            <td>隐匿和家政</td>
+            <td>经济和行政</td>
+          </tr>
+          <tr>
+            <td>参与方式</td>
+            <td>政治参与</td>
+            <td>家庭生活</td>
+            <td>经济行为</td>
+          </tr>
+          <tr>
+            <td>观点特征</td>
+            <td>多元观点</td>
+            <td>单一视角</td>
+            <td>同质化</td>
+          </tr>
+          <tr>
+            <td>行动形式</td>
+            <td>言说和行动</td>
+            <td>劳动和管理</td>
+            <td>生产和消费</td>
+          </tr>
+          <tr>
+            <td>空间性质</td>
+            <td>自由的空间</td>
+            <td>必然性的空间</td>
+            <td>自动性的空间</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="grid" style="margin-top: 24px;">
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>显现空间</h3>
+          <p>人们显现自我的场所。在公共领域中，我们不是作为抽象的人，而是作为独特的个体被看见。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('显现空间','Public 章节 · 约第261-264页')">?</button>
+        </article>
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>共同世界</h3>
+          <p>连接不同时代人的共享事物。公共领域是世界的一部分，既属于我们又独立于我们。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('共同世界','Public 章节 · 约第261-264页')">?</button>
+        </article>
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>中介空间</th>
+          <p>人与人之间关系的空间（In-between）。公共领域存在于人与人之间，是关系的场域。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('中介空间','Public 章节 · 约第261-264页')">?</button>
+        </article>
+      </div>
+    </div>
+
+    <div id="crisis" class="panel">
+      <h2 class="section-title">公共领域的衰落</h2>
+      <p class="section-lead">公共领域的衰落是现代性危机的核心。社会的扩张——经济逻辑对政治领域的殖民——摧毁了公共领域。</p>
+
+      <article class="story" data-source="Public 章节 · 约第261-264页">
+        <div class="story-label">现代危机</div>
+        <h3>公共领域的侵蚀</h3>
+        <p>社会的扩张——经济逻辑对政治领域的殖民——摧毁了公共领域。我们失去了政治存在的空间。</p>
+        <p>在黑暗中——即没有公共领域的地方——一切都可以发生。极权主义的温床就是公共领域的消亡。</p>
+        <div class="story-insight">恢复公共领域是当代政治设计的核心任务</div>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('公共领域衰落','Public 章节 · 约第261-264页')">?</button>
+      </article>
+
+      <div class="grid" style="margin-top: 24px;">
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>混淆公共与政府</h3>
+          <p>将公共领域等同于国家，混淆政治与政府。政府是制度的体现，公共领域是行动的空间。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('公共与政府','Public 章节 · 约第261-264页')">?</button>
+        </article>
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>经济殖民</h3>
+          <p>将公共领域社会化为经济空间，市场的殖民。一切都被经济逻辑主导，政治被降格为管理。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('经济殖民','Public 章节 · 约第261-264页')">?</button>
+        </article>
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>隐私绝对化</h3>
+          <p>隐私的绝对化导致退出公共领域。当每个人都退回私人空间，公共领域就消亡了。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('隐私绝对化','Public 章节 · 约第261-264页')">?</button>
+        </article>
+      </div>
+
+      <figure class="quote" data-source="Public 章节 · 约第261-264页" style="margin-top: 24px;">
+        <blockquote>在黑暗中——即没有公共领域的地方——一切都可以发生。</blockquote>
+        <figcaption class="q-source">—— 《黑暗时代的设计》p.261-264</figcaption>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('黑暗','Public 章节 · 约第261-264页')">?</button>
+      </figure>
+    </div>
+
+    <div id="insights" class="panel">
+      <h2 class="section-title">设计启示：重建公共领域</h2>
+      <p class="section-lead">恢复公共领域是当代政治设计的核心任务。设计可以为公共领域的重建做出重要贡献。</p>
+
+      <div class="grid">
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>创造显现空间</h3>
+          <p>设计物理和虚拟空间，让人们能够显现、被看见、被倾听。广场、论坛、社交媒体——都是潜在的公共领域。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('显现空间设计','Public 章节 · 约第261-264页')">?</button>
+        </article>
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>支持多元观点</h3>
+          <p>设计支持多元观点的机制，避免同质化。让不同的声音都能被听见，让对话成为可能。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('多元观点','Public 章节 · 约第261-264页')">?</button>
+        </article>
+        <article class="note" data-source="Public 章节 · 约第261-264页">
+          <h3>连接世代</h3>
+          <p>设计连接过去、现在和未来的事物。共同世界是连接世代的纽带，设计可以创造这种跨越时间的联结。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('连接世代','Public 章节 · 约第261-264页')">?</button>
+        </article>
+      </div>
+
+      <article class="story" data-source="Public 章节 · 约第261-264页" style="margin-top: 24px;">
+        <div class="story-label">设计任务</div>
+        <h3>为政治性而设计</h3>
+        <p>恢复公共领域是当代政治设计的核心任务。这意味着设计不仅仅是功能性的，更是政治性的。</p>
+        <p>设计师需要思考：我的设计创造了什么样的空间？它支持显现还是隐藏？它促进对话还是沉默？它连接人们还是分离人们？</p>
+        <div class="story-insight">在黑暗时代，设计可以成为点亮公共领域的光</div>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('政治性设计','Public 章节 · 约第261-264页')">?</button>
+      </article>
+    </div>
+
+    <footer class="footer">
+      <p>来源：《黑暗时代的设计：阿伦特辞典》(Designing in Dark Times: An Arendtian Lexicon) · Virginia Tassinari, Eduardo Staszowski 编 · Bloomsbury Visual Arts 2021</p>
+      <p>本页面由 book-to-webpage skill 生成交互式学习页面 · 仅用于个人学习研究</p>
+    </footer>
+  </main>
+
+  <div class="dd-overlay" id="ddOverlay">
+    <div class="dd-popover">
+      <p class="dd-title" id="ddTitle"></p>
+      <p class="dd-ctx" id="ddCtx"></p>
+      <textarea id="ddInput" placeholder="输入你想追问的细节..."></textarea>
+      <div class="dd-actions">
+        <button class="dd-submit" id="ddSubmit">复制追问到剪贴板</button>
+        <button class="dd-cancel" id="ddCancel">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dd-toast" id="ddToast"></div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.onclick = function(){
+        document.querySelectorAll(".tab").forEach(function(x){ x.setAttribute("aria-selected", "false"); });
+        document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("active"); });
+        t.setAttribute("aria-selected", "true");
+        var panelId = t.getAttribute("data-tab");
+        var panel = document.getElementById(panelId);
+        if(panel) panel.classList.add("active");
+      };
+    });
+
+    // Feature selector
+    var featureData = {
+      appearance: {
+        label: "第一重特征",
+        title: "显现性 (Appearance)",
+        body: "公共领域是显现的空间，是我们不仅作为物种成员，而且作为独特个体被看见的地方。在公共领域中，行动和言说展开，人们展现自己的独特性。没有显现，就没有真正的存在。公共领域是光，它照亮人类事务，赋予它们实在性。"
+      },
+      reality: {
+        label: "第二重特征",
+        title: "实在性 (Reality)",
+        body: "公共领域为事物提供实在性。只有在公共领域中显现的事物，才具有真正的实在性。私人领域中的事物可能只存在于个体的主观世界中，而公共领域中的事物被多元视角所确认，因此具有客观实在性。"
+      },
+      worldliness: {
+        label: "第三重特征",
+        title: "世界性 (Worldliness)",
+        body: "公共领域连接人们，创造共享的世界。它既是我们的共同所有物，又独立于任何个人。世界性意味着我们生活在一个共同的人造环境中，这个环境连接着过去、现在和未来的世代。"
+      }
+    };
+
+    document.querySelectorAll(".city-btn").forEach(function(b){
+      b.onclick = function(){
+        document.querySelectorAll(".city-btn").forEach(function(x){ x.classList.remove("active"); });
+        b.classList.add("active");
+        var key = b.getAttribute("data-feature");
+        var d = featureData[key];
+        if(d){
+          var result = document.getElementById("featureResult");
+          if(result){
+            result.innerHTML = '<div class="label">' + d.label + '</div><h3>' + d.title + '</h3><p>' + d.body + '</p>';
+          }
+        }
+      };
+    });
+
+    // Matrix row hover
+    document.querySelectorAll(".matrix tbody tr").forEach(function(r){
+      r.onmouseenter = function(){ r.classList.add("row-hi"); };
+      r.onmouseleave = function(){ r.classList.remove("row-hi"); };
+    });
+
+    // Source toggle
+    var toggle = document.getElementById("srcToggle");
+    if(toggle){
+      toggle.onclick = function(){
+        document.body.classList.toggle("show-sources");
+        toggle.classList.toggle("active");
+        toggle.textContent = document.body.classList.contains("show-sources") ? "隐藏出处" : "显示出处";
+      };
+    }
+
+    // Deep dive popover
+    (function(){
+      var overlay = document.getElementById("ddOverlay");
+      var titleEl = document.getElementById("ddTitle");
+      var ctxEl = document.getElementById("ddCtx");
+      var input = document.getElementById("ddInput");
+      var toast = document.getElementById("ddToast");
+      var currentRef = "";
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(function(){ toast.classList.remove("show"); }, 2000);
+      }
+
+      window.openDeepDive = function(conceptName, source){
+        currentRef = source;
+        titleEl.textContent = "追问「" + conceptName + "」";
+        ctxEl.textContent = "来源：" + source + "  |  将生成一个结构化的追问 prompt 复制到剪贴板，贴回对话即可深入。";
+        input.value = "";
+        overlay.classList.add("active");
+        setTimeout(function(){ input.focus(); }, 200);
+      };
+
+      document.getElementById("ddCancel").onclick = function(){
+        overlay.classList.remove("active");
+      };
+
+      overlay.onclick = function(e){
+        if(e.target === overlay) overlay.classList.remove("active");
+      };
+
+      document.getElementById("ddSubmit").onclick = function(){
+        var q = input.value.trim();
+        if(!q){ showToast("请输入你的问题"); return; }
+        var bookName = "黑暗时代的设计";
+        var concept = titleEl.textContent.replace("追问「","").replace("」","");
+        var prompt = "对《" + bookName + "》中「" + concept + "」，深入追问：" + q + "。\n\n请用 book-to-webpage skill 生成一个交互 HTML 页面来回答这个问题。知识库路径：黑暗时代的设计.kb，出处：" + currentRef;
+        navigator.clipboard.writeText(prompt).then(function(){
+          overlay.classList.remove("active");
+          showToast("追问 prompt 已复制，贴回 Claude 对话即可");
+        }).catch(function(){
+          showToast("复制失败，请手动复制");
+        });
+      };
+    })();
+  </script>
+</body>
+</html>

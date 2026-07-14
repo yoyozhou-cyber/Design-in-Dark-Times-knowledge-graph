@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>《黑暗时代的设计》— 权力的涌现</title>
+  <style>
+    :root {
+      --ink: #171411;
+      --muted: #6d6258;
+      --paper: #f8f2e7;
+      --paper-deep: #ece1cf;
+      --line: #d8c8af;
+      --red: #b9422f;
+      --blue: #245f73;
+      --green: #4d6f48;
+      --gold: #c2872d;
+      --white: #fffaf0;
+      --shadow: 0 18px 50px rgba(55, 38, 19, .14);
+
+      --font-body: "Songti SC", "Noto Serif CJK SC", Georgia, serif;
+      --font-display: "PingFang SC", "Microsoft YaHei", sans-serif;
+      --bg: radial-gradient(circle at 22% 12%, rgba(194, 135, 45, .18), transparent 28rem),
+            linear-gradient(135deg, #fbf6ec 0%, #efe1ca 100%);
+      --surface: rgba(255, 250, 240, .62);
+      --surface-strong: rgba(255, 250, 240, .72);
+      --bar-bg: rgba(248, 242, 231, .95);
+      --ink-soft: #3d332b;
+      --ink-soft-2: #44392f;
+      --tint-accent: rgba(194, 135, 45, .12);
+      --tint-accent-strong: rgba(194, 135, 45, .15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: var(--font-body);
+    }
+
+    button { font: inherit; color: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 44px;
+      isolation: isolate;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 52vh;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 32px;
+      align-items: end;
+      padding: 48px 0 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--red);
+      font: 700 14px/1.3 var(--font-display);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(44px, 7vw, 86px);
+      line-height: .98;
+      font-weight: 900;
+    }
+
+    .hero .lede {
+      margin: 22px 0 0;
+      max-width: 720px;
+      color: var(--ink-soft);
+      font-size: 21px;
+      line-height: 1.7;
+    }
+
+    .thesis {
+      border-left: 7px solid var(--red);
+      background: var(--surface-strong);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .thesis strong {
+      display: block;
+      margin-bottom: 12px;
+      font: 800 18px/1.2 var(--font-display);
+    }
+
+    .thesis span {
+      display: block;
+      color: var(--ink-soft-2);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    /* Tabs */
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      margin: 12px 0 28px;
+      border: 1px solid var(--line);
+      background: var(--bar-bg);
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .tab {
+      min-height: 52px;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      font: 800 16px/1.2 var(--font-display);
+      pointer-events: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tab[aria-selected="true"] {
+      color: var(--white);
+      background: var(--ink);
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+      animation: rise .36s ease both;
+    }
+
+    .panel.active { display: block; }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      margin: 0 0 18px;
+      font: 900 30px/1.15 var(--font-display);
+    }
+
+    .section-lead {
+      margin: 0 0 24px;
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    /* Grid & Note cards */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .note {
+      min-height: 220px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      position: relative;
+    }
+
+    .note h3 {
+      margin: 0 0 12px;
+      font: 900 21px/1.2 var(--font-display);
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--ink-soft-2);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    /* Matrix */
+    table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font: 16px/1.5 var(--font-body);
+    }
+
+    .matrix th, .matrix td {
+      padding: 12px 10px;
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .matrix th {
+      background: var(--surface-strong);
+      font: 800 14px/1.3 var(--font-display);
+    }
+
+    .matrix td:first-child { font-weight: 700; }
+    .matrix tbody tr.row-hi { background: var(--tint-accent); }
+
+    /* Story Card */
+    .story {
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      padding: 24px 28px;
+      margin: 18px 0;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .story .story-label {
+      color: var(--red);
+      font: 700 13px/1.3 var(--font-display);
+      margin-bottom: 10px;
+    }
+
+    .story h3 {
+      margin: 0 0 14px;
+      font: 900 22px/1.2 var(--font-display);
+    }
+
+    .story p {
+      margin: 0 0 10px;
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .story .story-insight {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--line);
+      color: var(--blue);
+      font: 700 17px/1.6 var(--font-display);
+    }
+
+    /* Quote Card */
+    .quote {
+      position: relative;
+      padding: 28px 32px 22px;
+      margin: 18px 0;
+      border-left: 4px solid var(--gold);
+      background: var(--surface-strong);
+      box-shadow: var(--shadow);
+    }
+
+    .quote::before {
+      content: "\201C";
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      color: var(--gold);
+      font: 900 64px/1 var(--font-body);
+      opacity: .35;
+    }
+
+    .quote blockquote {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 19px;
+      line-height: 1.8;
+      font-style: normal;
+    }
+
+    .quote .q-source {
+      display: block;
+      margin-top: 10px;
+      color: var(--muted);
+      font: 13px/1.4 var(--font-display);
+    }
+
+    /* Accordion */
+    .accordion details {
+      margin-bottom: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      position: relative;
+    }
+
+    .accordion summary {
+      padding: 16px 20px;
+      cursor: pointer;
+      font: 800 17px/1.3 var(--font-display);
+      list-style: none;
+    }
+
+    .accordion summary::-webkit-details-marker { display: none; }
+
+    .accordion summary::before {
+      content: "+";
+      display: inline-block;
+      width: 20px;
+      margin-right: 8px;
+      color: var(--gold);
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .accordion details[open] summary::before { content: "−"; }
+
+    .accordion .acc-body {
+      padding: 0 20px 16px 44px;
+      color: var(--ink-soft-2);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    /* Source Markers */
+    .src-toggle {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 100;
+      padding: 7px 14px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--bar-bg);
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      font: 12px/1.2 var(--font-display);
+      color: var(--muted);
+      transition: all .2s;
+    }
+
+    .src-toggle:hover { border-color: var(--gold); color: var(--ink); }
+
+    .note[data-source],
+    .story[data-source],
+    .accordion details[data-source],
+    .quote[data-source] {
+      position: relative;
+      padding-left: 26px;
+      border-left: 3px solid var(--line);
+      transition: border-color .2s;
+    }
+
+    .note[data-source]:hover,
+    .story[data-source]:hover,
+    .accordion details[data-source]:hover,
+    .quote[data-source]:hover {
+      border-left-color: var(--blue);
+    }
+
+    [data-source]::after {
+      content: attr(data-source);
+      position: absolute;
+      left: -4px;
+      bottom: calc(100% + 4px);
+      padding: 3px 8px;
+      background: var(--ink);
+      color: var(--white);
+      font: 11px/1.3 var(--font-display);
+      border-radius: 3px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+      z-index: 3;
+    }
+
+    [data-source]:hover::after { opacity: 1; }
+
+    body.show-sources .note::before,
+    body.show-sources .story::before,
+    body.show-sources .accordion details::before,
+    body.show-sources .quote::before {
+      content: attr(data-source);
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font: 11px/1.3 var(--font-display);
+    }
+
+    /* Deep Dive Button */
+    .deep-dive-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--muted);
+      cursor: pointer;
+      font: 700 14px/1 var(--font-display);
+      opacity: 0;
+      transition: opacity .2s;
+      z-index: 2;
+    }
+
+    .note:hover .deep-dive-btn,
+    .story:hover .deep-dive-btn,
+    .accordion details:hover .deep-dive-btn,
+    .quote:hover .deep-dive-btn {
+      opacity: .65;
+    }
+
+    .deep-dive-btn:hover { opacity: 1 !important; background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+    /* Deep Dive Popover */
+    .dd-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(23, 20, 17, .35);
+      backdrop-filter: blur(2px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dd-overlay.active { display: flex; }
+
+    .dd-popover {
+      width: min(520px, calc(100% - 32px));
+      padding: 28px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+    }
+
+    .dd-popover .dd-title {
+      margin: 0 0 6px;
+      font: 900 22px/1.2 var(--font-display);
+    }
+
+    .dd-popover .dd-ctx {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font: 13px/1.5 var(--font-display);
+    }
+
+    .dd-popover textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      font: 16px/1.6 var(--font-display);
+      color: var(--ink);
+      background: var(--white);
+      resize: vertical;
+      margin-bottom: 12px;
+    }
+
+    .dd-popover .dd-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dd-popover .dd-submit {
+      padding: 10px 22px;
+      border: 0;
+      border-radius: 4px;
+      background: var(--blue);
+      color: var(--white);
+      cursor: pointer;
+      font: 700 15px/1.3 var(--font-display);
+    }
+
+    .dd-popover .dd-cancel {
+      padding: 10px 18px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      font: 700 15px/1.3 var(--font-display);
+      color: var(--muted);
+    }
+
+    /* Toast */
+    .dd-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 28px;
+      background: var(--ink);
+      color: var(--white);
+      border-radius: 6px;
+      font: 14px/1.4 var(--font-display);
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+      z-index: 300;
+    }
+
+    .dd-toast.show { opacity: 1; }
+
+    /* Footer */
+    .footer {
+      margin-top: 34px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font: 14px/1.7 var(--font-display);
+    }
+
+    /* Responsive */
+    @media (max-width: 880px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 28px; }
+      .tabs { position: static; grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .page { width: min(100% - 22px, 1180px); padding-top: 18px; }
+      h1 { font-size: 42px; }
+      .hero .lede { font-size: 18px; }
+    }
+  </style>
+</head>
+<body data-theme="warm-paper">
+  <button id="srcToggle" class="src-toggle" title="显示/隐藏出处">显示出处</button>
+  <main class="page">
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <p class="eyebrow">核心框架 2/5</p>
+        <h1 id="title">权力的涌现</h1>
+        <p class="lede">权力不是暴力、不是统治工具、也不是个人财产，而是人们一起行动时产生的力量。权力在人与人之间产生，当行动者聚集在一起并协调行动时，权力就涌现出来。</p>
+      </div>
+      <aside class="thesis">
+        <strong>一句话总论</strong>
+        <span>权力是集体行动的产物，不是个人财产。权力与暴力根本不同——当一方占据绝对统治地位时，另一方就消失了。</span>
+      </aside>
+    </section>
+
+    <nav class="tabs" aria-label="学习模块">
+      <button class="tab" aria-selected="true" data-tab="power-vs-violence">权力与暴力</button>
+      <button class="tab" aria-selected="false" data-tab="three-elements">三要素</button>
+      <button class="tab" aria-selected="false" data-tab="emergence">涌现性</button>
+      <button class="tab" aria-selected="false" data-tab="insights">设计启示</button>
+    </nav>
+
+    <div id="power-vs-violence" class="panel active">
+      <h2 class="section-title">权力 vs 暴力：根本区分</h2>
+      <p class="section-lead">权力与暴力不是程度上的差异，而是性质上的对立。理解这一区分是理解阿伦特政治哲学的关键。</p>
+
+      <table class="matrix">
+        <thead>
+          <tr><th>维度</th><th>权力 (Power)</th><th>暴力 (Violence)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>来源</td>
+            <td>集体行动中产生</td>
+            <td>工具性的手段</td>
+          </tr>
+          <tr>
+            <td>条件</td>
+            <td>需要复数性和言说</td>
+            <td>可以独自执行</td>
+          </tr>
+          <tr>
+            <td>合法性</td>
+            <td>合法性的源泉</td>
+            <td>合法性的伪装</td>
+          </tr>
+          <tr>
+            <td>潜能</td>
+            <td>无限潜能</td>
+            <td>有限工具</td>
+          </tr>
+          <tr>
+            <td>作用</td>
+            <td>产生世界</td>
+            <td>毁灭世界</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <figure class="quote" data-source="Power 章节 · 约第251-258页" style="margin-top: 24px;">
+        <blockquote>权力和暴力是对立的；当一方占据绝对统治地位时，另一方就消失了。</blockquote>
+        <figcaption class="q-source">—— 《黑暗时代的设计》p.251-258</figcaption>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('权力与暴力','Power 章节 · 约第251-258页')">?</button>
+      </figure>
+
+      <article class="story" data-source="Power 章节 · 约第251-258页" style="margin-top: 24px;">
+        <div class="story-label">核心洞见</div>
+        <h3>权力的本质</h3>
+        <p>权力在人与人之间产生，而不是从人身上发出。权力不是个人拥有的东西，而是人们一起行动时产生的现象。</p>
+        <p>当言说不再是沟通的媒介，暴力就会出现。政治的真正目的是自由，而权力是自由的体现。</p>
+        <div class="story-insight">现代政治的危机在于权力的工具化和暴力的政治化</div>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('权力本质','Power 章节 · 约第251-258页')">?</button>
+      </article>
+    </div>
+
+    <div id="three-elements" class="panel">
+      <h2 class="section-title">权力的三要素</h2>
+      <p class="section-lead">权力的产生需要三个基本条件，缺一不可。这三个要素构成了权力的生态系统。</p>
+
+      <div class="grid">
+        <article class="note" data-source="Power 章节 · 约第251-258页">
+          <h3>复数性 (Plurality)</h3>
+          <p>权力需要多元的行动者。没有复数的人，就没有权力产生的土壤。权力是人与人之间的关系现象。</p>
+          <p style="margin-top: 8px; color: var(--muted); font-size: 15px;">没有复数性，权力就不可能存在。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('复数性','Power 章节 · 约第251-258页')">?</button>
+        </article>
+        <article class="note" data-source="Power 章节 · 约第251-258页">
+          <h3>言说 (Speech)</h3>
+          <p>权力通过言说协调和显现。言说让行动者相互理解、协调行动。没有言说，就没有协调，也就没有权力。</p>
+          <p style="margin-top: 8px; color: var(--muted); font-size: 15px;">当言说消失，暴力就会填补空缺。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('言说','Power 章节 · 约第251-258页')">?</button>
+        </article>
+        <article class="note" data-source="Power 章节 · 约第251-258页">
+          <h3>协调行动 (Acting in Concert)</h3>
+          <p>权力在集体行动中产生。人们必须一起行动，权力才能涌现。单独的个人无法产生权力。</p>
+          <p style="margin-top: 8px; color: var(--muted); font-size: 15px;">权力是"一起行动"的产物。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('协调行动','Power 章节 · 约第251-258页')">?</button>
+        </article>
+      </div>
+
+      <figure class="quote" data-source="Power 章节 · 约第251-258页" style="margin-top: 24px;">
+        <blockquote>权力在人与人之间产生，而不是从人身上发出。政治的真正目的是自由，而权力是自由的体现。</blockquote>
+        <figcaption class="q-source">—— 《黑暗时代的设计》p.251-258</figcaption>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('权力产生','Power 章节 · 约第251-258页')">?</button>
+      </figure>
+    </div>
+
+    <div id="emergence" class="panel">
+      <h2 class="section-title">权力的涌现性</h2>
+      <p class="section-lead">权力不是固有的属性，而是在行动中涌现的现象。理解涌现性，才能理解权力的动态本质。</p>
+
+      <div class="accordion">
+        <details data-source="Power 章节 · 约第251-258页" open>
+          <summary>涌现性 (Emergence)</summary>
+          <div class="acc-body">
+            <p>权力不是固有的，而是在行动中涌现的。它不是个人财产，而是关系现象。权力随着人们开始行动而产生，随着人们分散而消失。</p>
+            <p>这意味着权力是脆弱的、动态的，需要持续的努力来维持。没有持续的行动和言说，权力就会消散。</p>
+          </div>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('涌现性','Power 章节 · 约第251-258页')">?</button>
+        </details>
+        <details data-source="Power 章节 · 约第251-258页">
+          <summary>潜能 (Potentiality)</summary>
+          <div class="acc-body">
+            <p>权力是"能够"而非"必然"。它是一种潜能，一种可能性。权力意味着人们有能力一起行动，但不一定真的行动。</p>
+            <p>这种潜能的存在本身就具有影响力。知道人们可以一起行动，这本身就改变了政治格局。</p>
+          </div>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('潜能','Power 章节 · 约第251-258页')">?</button>
+        </details>
+        <details data-source="Power 章节 · 约第251-258页">
+          <summary>合法性 (Legitimacy)</summary>
+          <div class="acc-body">
+            <p>真正的权力是自我合法的，不需要外部授权。暴力需要权力的伪装来获得合法性，但权力本身就是合法的源泉。</p>
+            <p>当权力被工具化、被制度化时，它可能失去这种内在的合法性，变成纯粹的强制。</p>
+          </div>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('合法性','Power 章节 · 约第251-258页')">?</button>
+        </details>
+        <details data-source="Power 章节 · 约第251-258页">
+          <summary>制度化 (Institutionalization)</summary>
+          <div class="acc-body">
+            <p>权力可以制度化，但制度不等于权力。制度是权力的结晶，但不能替代权力的持续产生。</p>
+            <p>当制度忘记了自己的权力来源，当制度不再回应行动者的协调，制度就变成了暴力的伪装。</p>
+          </div>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('制度化','Power 章节 · 约第251-258页')">?</button>
+        </details>
+      </div>
+
+      <article class="story" data-source="Power 章节 · 约第251-258页" style="margin-top: 24px;">
+        <div class="story-label">反模式警示</div>
+        <h3>权力的误解与滥用</h3>
+        <p><strong>将权力等同于暴力</strong>：导致威权主义政治，用强制代替协调。</p>
+        <p><strong>将权力个人化</strong>：忽略权力的集体性本质，产生领袖崇拜。</p>
+        <p><strong>权力的工具化</strong>：将政治降为行政技术，失去真正的政治性。</p>
+        <div class="story-insight">对权力的恐惧导致政治参与退缩，这反而创造了暴力滋生的空间</div>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('权力误解','Power 章节 · 约第251-258页')">?</button>
+      </article>
+    </div>
+
+    <div id="insights" class="panel">
+      <h2 class="section-title">设计启示：为权力创造条件</h2>
+      <p class="section-lead">理解权力的涌现性，对设计实践有深刻的启示。设计可以为权力的产生创造条件。</p>
+
+      <div class="grid">
+        <article class="note" data-source="Power 章节 · 约第251-258页">
+          <h3>创造聚集空间</h3>
+          <p>设计物理和虚拟空间，让人们能够聚集、相遇、交流。广场、会议室、在线社区——这些都是权力产生的潜在场所。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('聚集空间','Power 章节 · 约第251-258页')">?</button>
+        </article>
+        <article class="note" data-source="Power 章节 · 约第251-258页">
+          <h3>促进言说与倾听</h3>
+          <p>设计支持言说和倾听的机制。让不同的声音被听见，让对话成为可能。没有言说，就没有权力的协调。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('言说设计','Power 章节 · 约第251-258页')">?</button>
+        </article>
+        <article class="note" data-source="Power 章节 · 约第251-258页">
+          <h3>支持协调行动</h3>
+          <p>设计让人们能够一起行动的工具和平台。从协作软件到组织工具，支持集体行动的设计就是支持权力的设计。</p>
+          <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('协调设计','Power 章节 · 约第251-258页')">?</button>
+        </article>
+      </div>
+
+      <figure class="quote" data-source="Power 章节 · 约第251-258页" style="margin-top: 24px;">
+        <blockquote>权力不是个人拥有的东西，而是人们一起行动时产生的现象。设计可以为这种"一起行动"创造条件。</blockquote>
+        <figcaption class="q-source">—— 《黑暗时代的设计》解读</figcaption>
+        <button class="deep-dive-btn" title="追问这个概念" onclick="openDeepDive('设计与权力','Power 章节 · 约第251-258页')">?</button>
+      </figure>
+    </div>
+
+    <footer class="footer">
+      <p>来源：《黑暗时代的设计：阿伦特辞典》(Designing in Dark Times: An Arendtian Lexicon) · Virginia Tassinari, Eduardo Staszowski 编 · Bloomsbury Visual Arts 2021</p>
+      <p>本页面由 book-to-webpage skill 生成交互式学习页面 · 仅用于个人学习研究</p>
+    </footer>
+  </main>
+
+  <div class="dd-overlay" id="ddOverlay">
+    <div class="dd-popover">
+      <p class="dd-title" id="ddTitle"></p>
+      <p class="dd-ctx" id="ddCtx"></p>
+      <textarea id="ddInput" placeholder="输入你想追问的细节..."></textarea>
+      <div class="dd-actions">
+        <button class="dd-submit" id="ddSubmit">复制追问到剪贴板</button>
+        <button class="dd-cancel" id="ddCancel">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dd-toast" id="ddToast"></div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.onclick = function(){
+        document.querySelectorAll(".tab").forEach(function(x){ x.setAttribute("aria-selected", "false"); });
+        document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("active"); });
+        t.setAttribute("aria-selected", "true");
+        var panelId = t.getAttribute("data-tab");
+        var panel = document.getElementById(panelId);
+        if(panel) panel.classList.add("active");
+      };
+    });
+
+    // Matrix row hover
+    document.querySelectorAll(".matrix tbody tr").forEach(function(r){
+      r.onmouseenter = function(){ r.classList.add("row-hi"); };
+      r.onmouseleave = function(){ r.classList.remove("row-hi"); };
+    });
+
+    // Source toggle
+    var toggle = document.getElementById("srcToggle");
+    if(toggle){
+      toggle.onclick = function(){
+        document.body.classList.toggle("show-sources");
+        toggle.classList.toggle("active");
+        toggle.textContent = document.body.classList.contains("show-sources") ? "隐藏出处" : "显示出处";
+      };
+    }
+
+    // Deep dive popover
+    (function(){
+      var overlay = document.getElementById("ddOverlay");
+      var titleEl = document.getElementById("ddTitle");
+      var ctxEl = document.getElementById("ddCtx");
+      var input = document.getElementById("ddInput");
+      var toast = document.getElementById("ddToast");
+      var currentRef = "";
+
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(function(){ toast.classList.remove("show"); }, 2000);
+      }
+
+      window.openDeepDive = function(conceptName, source){
+        currentRef = source;
+        titleEl.textContent = "追问「" + conceptName + "」";
+        ctxEl.textContent = "来源：" + source + "  |  将生成一个结构化的追问 prompt 复制到剪贴板，贴回对话即可深入。";
+        input.value = "";
+        overlay.classList.add("active");
+        setTimeout(function(){ input.focus(); }, 200);
+      };
+
+      document.getElementById("ddCancel").onclick = function(){
+        overlay.classList.remove("active");
+      };
+
+      overlay.onclick = function(e){
+        if(e.target === overlay) overlay.classList.remove("active");
+      };
+
+      document.getElementById("ddSubmit").onclick = function(){
+        var q = input.value.trim();
+        if(!q){ showToast("请输入你的问题"); return; }
+        var bookName = "黑暗时代的设计";
+        var concept = titleEl.textContent.replace("追问「","").replace("」","");
+        var prompt = "对《" + bookName + "》中「" + concept + "」，深入追问：" + q + "。\n\n请用 book-to-webpage skill 生成一个交互 HTML 页面来回答这个问题。知识库路径：黑暗时代的设计.kb，出处：" + currentRef;
+        navigator.clipboard.writeText(prompt).then(function(){
+          overlay.classList.remove("active");
+          showToast("追问 prompt 已复制，贴回 Claude 对话即可");
+        }).catch(function(){
+          showToast("复制失败，请手动复制");
+        });
+      };
+    })();
+  </script>
+</body>
+</html>

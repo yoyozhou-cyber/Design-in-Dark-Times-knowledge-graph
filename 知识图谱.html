@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿伦特知识图谱</title>
+    <script src="d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Georgia, 'SimSun', serif;
+            background: #f8f2e7;
+            color: #2c2416;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c2416 0%, #4a3f2e 100%);
+            color: #faf6ee;
+            padding: 1rem;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.5rem; font-weight: normal; }
+        #graph-container {
+            width: 100vw;
+            height: calc(100vh - 60px);
+        }
+        .tooltip {
+            position: absolute;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            pointer-events: none;
+            opacity: 0;
+            font-size: 0.85rem;
+            z-index: 1000;
+        }
+        .controls {
+            position: absolute;
+            top: 80px;
+            left: 15px;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            width: 200px;
+        }
+        .controls h3 {
+            color: #245f73;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        .control-group { margin-bottom: 1rem; }
+        .control-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .search-box {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+        .filter-btn {
+            padding: 0.3rem 0.6rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: #245f73;
+            color: white;
+            border-color: #245f73;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0.3rem 0;
+            font-size: 0.8rem;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.4rem;
+        }
+        svg { width: 100%; height: 100%; }
+        .node circle { cursor: pointer; stroke: #fff; stroke-width: 2px; }
+        .node text { font-size: 10px; pointer-events: none; fill: #333; }
+        .link { stroke: #999; stroke-opacity: 0.4; }
+        .link.active { stroke: #b49450; stroke-opacity: 0.8; stroke-width: 2px; }
+        .node.dimmed { opacity: 0.15; }
+        .link.dimmed { opacity: 0.05; }
+        .zoom-controls {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 100;
+        }
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .zoom-btn:hover { background: #245f73; color: white; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>阿伦特知识图谱</h1>
+    </header>
+
+    <div class="controls">
+        <h3>探索控制</h3>
+        <div class="control-group">
+            <label>搜索</label>
+            <input type="text" class="search-box" id="searchInput" placeholder="输入概念名称">
+        </div>
+        <div class="control-group">
+            <label>筛选</label>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-category="all">全部</button>
+                <button class="filter-btn" data-category="political">政治</button>
+                <button class="filter-btn" data-category="philosophical">哲学</button>
+                <button class="filter-btn" data-category="critical">批判</button>
+                <button class="filter-btn" data-category="human">人性</button>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>图例</label>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #b9422f;"></div>
+                <span>政治概念</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #245f73;"></div>
+                <span>哲学基础</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #4a7c59;"></div>
+                <span>批判概念</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background: #b49450;"></div>
+                <span>人的条件</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="graph-container"></div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="resetZoom()">⌂</button>
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+    </div>
+
+    <script>
+        // 节点数据
+        const nodes = [
+            {id:"action",name:"Action",cat:"political",imp:5},
+            {id:"power",name:"Power",cat:"political",imp:5},
+            {id:"public",name:"Public",cat:"political",imp:5},
+            {id:"plurality",name:"Plurality",cat:"political",imp:5},
+            {id:"freedom",name:"Freedom",cat:"political",imp:4},
+            {id:"speech",name:"Speech",cat:"political",imp:4},
+            {id:"citizenship",name:"Citizenship",cat:"political",imp:4},
+            {id:"democracy",name:"Democracy",cat:"political",imp:4},
+            {id:"equality",name:"Equality",cat:"political",imp:3},
+            {id:"law",name:"Law",cat:"political",imp:3},
+            {id:"courage",name:"Courage",cat:"political",imp:3},
+            {id:"judgment",name:"Judgment",cat:"political",imp:3},
+            {id:"natality",name:"Natality",cat:"philosophical",imp:5},
+            {id:"thinking",name:"Thinking",cat:"philosophical",imp:4},
+            {id:"imagination",name:"Imagination",cat:"philosophical",imp:4},
+            {id:"stories",name:"Stories",cat:"philosophical",imp:3},
+            {id:"history",name:"History",cat:"philosophical",imp:3},
+            {id:"solitude",name:"Solitude",cat:"philosophical",imp:3},
+            {id:"totalitarianism",name:"Totalitarianism",cat:"critical",imp:5},
+            {id:"violence",name:"Violence",cat:"critical",imp:4},
+            {id:"evil",name:"Evil",cat:"critical",imp:4},
+            {id:"bureaucracy",name:"Bureaucracy",cat:"critical",imp:3},
+            {id:"alienation",name:"Alienation",cat:"critical",imp:3},
+            {id:"technology",name:"Technology",cat:"critical",imp:3},
+            {id:"thoughtlessness",name:"Thoughtlessness",cat:"critical",imp:3},
+            {id:"labor",name:"Labor",cat:"human",imp:4},
+            {id:"work",name:"Work",cat:"human",imp:4},
+            {id:"humanity",name:"Humanity",cat:"human",imp:3},
+            {id:"creativity",name:"Creativity",cat:"human",imp:3}
+        ];
+
+        // 连接数据
+        let links = [
+            {s:"action",t:"power"},{s:"action",t:"public"},{s:"action",t:"plurality"},
+            {s:"action",t:"freedom"},{s:"action",t:"natality"},{s:"action",t:"speech"},
+            {s:"power",t:"plurality"},{s:"power",t:"violence"},{s:"power",t:"public"},
+            {s:"public",t:"plurality"},{s:"public",t:"freedom"},{s:"plurality",t:"equality"},
+            {s:"freedom",t:"action"},{s:"natality",t:"creativity"},{s:"natality",t:"thinking"},
+            {s:"thinking",t:"judgment"},{s:"thinking",t:"imagination"},{s:"thinking",t:"evil"},
+            {s:"thinking",t:"solitude"},{s:"imagination",t:"stories"},{s:"stories",t:"history"},
+            {s:"history",t:"action"},{s:"totalitarianism",t:"violence"},{s:"totalitarianism",t:"evil"},
+            {s:"totalitarianism",t:"bureaucracy"},{s:"totalitarianism",t:"thoughtlessness"},
+            {s:"evil",t:"thoughtlessness"},{s:"evil",t:"bureaucracy"},{s:"bureaucracy",t:"thoughtlessness"},
+            {s:"violence",t:"power"},{s:"violence",t:"work"},{s:"alienation",t:"totalitarianism"},
+            {s:"technology",t:"work"},{s:"labor",t:"work"},{s:"labor",t:"action"},
+            {s:"work",t:"action"},{s:"work",t:"creativity"},{s:"creativity",t:"natality"},
+            {s:"citizenship",t:"democracy"},{s:"citizenship",t:"action"},{s:"citizenship",t:"courage"},
+            {s:"democracy",t:"public"},{s:"democracy",t:"plurality"},{s:"humanity",t:"plurality"}
+        ];
+// 把 {s,t} 转为 D3 需要的 {source,target}，并过滤两端节点不存在的连线
+links = links.map(item => ({
+  source: item.s,
+  target: item.t
+})).filter(link => {
+  const hasSrc = nodes.some(n => n.id === link.source);
+  const hasTar = nodes.some(n => n.id === link.target);
+  return hasSrc && hasTar;
+});
+        const colors = {political:"#b9422f",philosophical:"#245f73",critical:"#4a7c59",human:"#b49450"};
+
+        const container = d3.select("#graph-container");
+        const width = container.node().getBoundingClientRect().width;
+        const height = container.node().getBoundingClientRect().height;
+
+        const svg = container.append("svg").attr("width", width).attr("height", height);
+        const g = svg.append("g");
+
+        const zoom = d3.zoom().scaleExtent([0.1,4]).on("zoom",(e)=>g.attr("transform",e.transform));
+        svg.call(zoom);
+
+        const simulation = d3.forceSimulation(nodes)
+            .force("link",d3.forceLink(links).id(d=>d.id).distance(80))
+            .force("charge",d3.forceManyBody().strength(-250))
+            .force("center",d3.forceCenter(width/2,height/2))
+            .force("collision",d3.forceCollide().radius(d=>(d.imp||3)*6));
+
+        const link = g.append("g").selectAll("line").data(links).enter().append("line")
+            .attr("class","link").attr("stroke-width",1.5);
+
+        const node = g.append("g").selectAll("g").data(nodes).enter().append("g")
+            .call(d3.drag().on("start",(e,d)=>{if(!e.active)simulation.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;})
+                          .on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y;})
+                          .on("end",(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null;}));
+
+        node.append("circle").attr("r",d=>(d.imp||3)*5).attr("fill",d=>colors[d.cat]).attr("stroke","#fff").attr("stroke-width",2);
+        node.append("text").attr("dx",d=>(d.imp||3)*5+4).attr("dy",".35em").text(d=>d.name);
+
+        const tooltip = d3.select("#tooltip");
+
+        node.on("mouseover",(e,d)=>{
+            tooltip.style("opacity",1).html(`<strong>${d.name}</strong>`).style("left",(e.pageX+10)+"px").style("top",(e.pageY-10)+"px");
+            const conn=new Set([d.id]);
+            links.forEach(l=>{if(l.s===d.id)conn.add(l.t);if(l.t===d.id)conn.add(l.s);});
+            node.classed("dimmed",n=>!conn.has(n.id));
+            link.classed("dimmed",l=>l.s!==d.id&&l.t!==d.id).classed("active",l=>l.s===d.id||l.t===d.id);
+        }).on("mouseout",()=>{
+            tooltip.style("opacity",0);
+            node.classed("dimmed",false);
+            link.classed("dimmed",false).classed("active",false);
+        });
+
+        simulation.on("tick",()=>{
+            link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
+            node.attr("transform",d=>`translate(${d.x},${d.y})`);
+        });
+
+        // Filter
+        document.querySelectorAll(".filter-btn").forEach(btn=>{
+            btn.addEventListener("click",function(){
+                document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+                this.classList.add("active");
+                const cat=this.dataset.category;
+                if(cat==="all"){node.style("opacity",1);link.style("opacity",1);}
+                else{node.style("opacity",d=>d.cat===cat?1:0.1);link.style("opacity",0.05);}
+            });
+        });
+
+        // Search
+        document.getElementById("searchInput").addEventListener("input",function(){
+            const term=this.value.toLowerCase();
+            if(term===""){node.style("opacity",1);return;}
+            node.each(function(d){
+                const match=d.name.toLowerCase().includes(term);
+                d3.select(this).style("opacity",match?1:0.1);
+            });
+        });
+
+        // Zoom
+        function zoomIn(){svg.transition().call(zoom.scaleBy,1.3);}
+        function zoomOut(){svg.transition().call(zoom.scaleBy,0.7);}
+        function resetZoom(){svg.transition().call(zoom.transform,d3.zoomIdentity);}
+    </script>
+</body>
+</html>
