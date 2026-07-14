@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黑暗时代的设计：全书概览</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #f8f2e7;
+            --surface-color: #faf6ee;
+            --text-color: #2c2416;
+            --accent-red: #b9422f;
+            --accent-blue: #245f73;
+            --accent-green: #4a7c59;
+            --accent-gold: #b49450;
+            --border-color: #e0d5c5;
+        }
+
+        body {
+            font-family: 'Georgia', 'SimSun', serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #2c2416 0%, #4a3f2e 50%, #2c2416 100%);
+            color: var(--surface-color);
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-images {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-image-container {
+            text-align: center;
+        }
+
+        .hero-image {
+            width: 150px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image:hover {
+            transform: translateY(-5px);
+        }
+
+        .hero-image.arendt-portrait {
+            width: 180px;
+            height: 220px;
+            object-position: center top;
+        }
+
+        .arendt-fallback {
+            display: none;
+        }
+
+        .hero-image-container .arendt-fallback {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-image-label {
+            display: block;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+
+        .hero .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .hero-stat .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--surface-color);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .nav a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            margin: 0 1.5rem;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: var(--accent-red);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent-gold);
+            display: inline-block;
+        }
+
+        /* Core Frameworks */
+        .frameworks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .framework-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--accent-blue);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .framework-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .framework-card h3 {
+            color: var(--accent-red);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .framework-card p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .framework-visual {
+            background: var(--surface-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .framework-item {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .framework-arrow {
+            color: var(--accent-gold);
+            margin: 0 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Concept Map */
+        .concept-map {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.political { background: var(--accent-red); }
+        .legend-dot.philosophical { background: var(--accent-blue); }
+        .legend-dot.critical { background: var(--accent-green); }
+        .legend-dot.human { background: var(--accent-gold); }
+
+        .concept-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .concept-node {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .concept-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .concept-node.political { background: var(--accent-red); }
+        .concept-node.philosophical { background: var(--accent-blue); }
+        .concept-node.critical { background: var(--accent-green); }
+        .concept-node.human { background: var(--accent-gold); }
+
+        .concept-node.large { font-size: 1.2rem; padding: 1rem 2rem; }
+        .concept-node.medium { font-size: 1rem; }
+        .concept-node.small { font-size: 0.85rem; }
+
+        /* Learning Paths */
+        .paths-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .path-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .path-card h3 {
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .path-steps {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .path-steps li {
+            counter-increment: step;
+            margin-bottom: 0.8rem;
+            padding-left: 2.5rem;
+            position: relative;
+        }
+
+        .path-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.8rem;
+            height: 1.8rem;
+            background: var(--accent-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* Key Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 120px;
+            color: var(--accent-gold);
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .insight-card h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .insight-card p {
+            color: #555;
+            font-style: italic;
+        }
+
+        /* Chapter Map */
+        .chapter-map {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .alphabet-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .alphabet-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .alphabet-btn:hover, .alphabet-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .chapter-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .chapter-item {
+            padding: 1rem;
+            background: var(--surface-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-gold);
+            transition: all 0.3s;
+        }
+
+        .chapter-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(5px);
+        }
+
+        .chapter-name {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .chapter-page {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--surface-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-meta {
+                gap: 1.5rem;
+            }
+
+            .hero-images {
+                gap: 2rem;
+            }
+
+            .hero-image {
+                width: 120px;
+                height: 176px;
+            }
+
+            .hero-image.arendt-portrait {
+                width: 144px;
+                height: 176px;
+            }
+
+            .frameworks-grid,
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .concept-node.large {
+                font-size: 1rem;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Hover BG utility */
+        .hover-bg {
+            background: var(--hover-bg);
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-images">
+                <div class="hero-image-container">
+                    <img
+                        src="https://images.gr-assets.com/books/1602104567l/55353060.jpg"
+                        alt="Designing in Dark Times: An Arendtian Lexicon 书籍封面"
+                        class="hero-image book-cover"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                    >
+                    <div style="display: none; width: 150px; height: 220px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 8px; align-items: center; justify-content: center; padding: 1rem; box-shadow: 0 8px 30px rgba(0,0,0,0.4); flex-direction: column;">
+                        <div style="color: white; text-align: center;">
+                            <div style="font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 0.5rem; opacity: 0.8;">BLOOMSBURY</div>
+                            <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 0.3rem;">Designing in</div>
+                            <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 0.3rem; color: #e94560;">Dark Times</div>
+                            <div style="font-size: 0.7rem; margin-top: 0.5rem; opacity: 0.7;">An Arendtian Lexicon</div>
+                        </div>
+                    </div>
+                    <span class="hero-image-label">《黑暗时代的设计》</span>
+                </div>
+            </div>
+
+            <h1>黑暗时代的设计</h1>
+            <p class="subtitle">阿伦特辞典 · 全书概览</p>
+            <p style="opacity: 0.8; font-size: 1rem;">Designing in Dark Times: An Arendtian Lexicon</p>
+
+            <div class="hero-meta">
+                <div class="hero-stat">
+                    <div class="number">54</div>
+                    <div class="label">核心概念</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">361</div>
+                    <div class="label">原著页数</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">5</div>
+                    <div class="label">核心框架</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">4</div>
+                    <div class="label">学习路径</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <a href="#frameworks">核心框架</a>
+        <a href="frameworks-index.html">5大框架详情 →</a>
+        <a href="#concept-map">概念图谱</a>
+        <a href="#concept-browser">概念浏览器 →</a>
+        <a href="#paths">学习路径</a>
+        <a href="#insights">核心洞见</a>
+        <a href="#chapters">章节地图</a>
+        <a href="知识图谱.html">知识图谱 →</a>
+    </nav>
+
+    <div class="container">
+        <!-- Core Frameworks -->
+        <section class="section" id="frameworks">
+            <h2 class="section-title">🏗️ 核心框架</h2>
+            <p style="margin-bottom: 1.5rem; color: #666;">点击任意框架卡片查看详细交互页面</p>
+
+            <div class="frameworks-grid">
+                <a href="framework-vita-activa.html" class="framework-card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3>1. 积极生活 (Vita Activa)</h3>
+                    <p>人类活动的三种基本形式，对应三种人的条件</p>
+                    <div class="framework-visual">
+                        <div class="framework-item">
+                            <strong>劳动 (Labor)</strong>
+                            <span class="framework-arrow">→</span>
+                            <span>生命 (Life)</span>
+                        </div>
+                        <div class="framework-item">
+                            <strong>工作 (Work)</strong>
+                            <span class="framework-arrow">→</span>
+                            <span>世界性 (Worldliness)</span>
+                        </div>
+                        <div class="framework-item">
+                            <strong>行动 (Action)</strong>
+                            <span class="framework-arrow">→</span>
+                            <span>复数性 (Plurality)</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--accent-red);">
+                        ⚠️ 现代性危机：Action > Work > Labor 的等级被颠倒
+                    </p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: bold;">
+                        点击查看详情 →
+                    </p>
+                </a>
+
+                <a href="framework-power.html" class="framework-card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3>2. 权力的涌现</h3>
+                    <p>权力不是个人财产，而是集体行动的涌现</p>
+                    <div class="framework-visual">
+                        <div class="framework-item">
+                            <span>复数性 (Plurality)</span>
+                        </div>
+                        <div class="framework-item">
+                            <span>+ 言说 (Speech)</span>
+                        </div>
+                        <div class="framework-item">
+                            <span>+ 协调行动 (Acting in Concert)</span>
+                        </div>
+                        <div class="framework-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color);">
+                            <strong style="color: var(--accent-red);">= 权力 (Power)</strong>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">
+                        💡 核心区分：Power vs Violence — 相反的而非程度差异
+                    </p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: bold;">
+                        点击查看详情 →
+                    </p>
+                </a>
+
+                <a href="framework-public.html" class="framework-card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3>3. 公共领域作为显现空间</h3>
+                    <p>公共领域不是政府，而是显现的空间</p>
+                    <div class="framework-visual">
+                        <ul style="margin-left: 1rem; color: #555;">
+                            <li>行动和言说展开的场所</li>
+                            <li>人类事务被光照亮的地方</li>
+                            <li>复数性实现的条件</li>
+                            <li>世界性展开的背景</li>
+                        </ul>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--accent-red);">
+                        ⚠️ 衰落：社会的扩张殖民了公共领域
+                    </p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: bold;">
+                        点击查看详情 →
+                    </p>
+                </a>
+
+                <a href="framework-natality.html" class="framework-card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3>4. 诞生性作为希望原则</h3>
+                    <p>人作为被开端的存在，具有开端能力</p>
+                    <div class="framework-visual">
+                        <div class="framework-item">
+                            <span>生物学诞生</span>
+                            <span class="framework-arrow">→</span>
+                            <span>政治诞生</span>
+                            <span class="framework-arrow">→</span>
+                            <span>行动的开端</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">
+                        ✨ 每个行动都是"奇迹"，打破因果链<br>
+                        🛡️ 对抗极权主义的根本：新的开端永远可能
+                    </p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: bold;">
+                        点击查看详情 →
+                    </p>
+                </a>
+
+                <a href="framework-plurality.html" class="framework-card" style="text-decoration: none; color: inherit; display: block;">
+                    <h3>5. 复数性作为政治条件</h3>
+                    <p>人类既平等又独特的共存状态</p>
+                    <div class="framework-visual">
+                        <div style="display: flex; justify-content: space-around; margin: 1rem 0;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; color: var(--accent-blue);">=</div>
+                                <div>平等性</div>
+                                <div style="font-size: 0.85rem; color: #888;">相互理解</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2rem; color: var(--accent-red);">≠</div>
+                                <div>独特性</div>
+                                <div style="font-size: 0.85rem; color: #888;">行动意义</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem;">
+                        💡 平等使我们能够沟通，独特使言说有意义
+                    </p>
+                    <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: bold;">
+                        点击查看详情 →
+                    </p>
+                </a>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="frameworks-index.html" style="display: inline-block; padding: 14px 28px; background: var(--accent-blue); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 15px rgba(36, 95, 115, 0.3); transition: all 0.3s;">
+                    📚 查看全部5个框架详解
+                </a>
+            </div>
+        </section>
+
+        <!-- Concept Map -->
+        <section class="section" id="concept-map">
+            <h2 class="section-title">🗺️ 概念图谱</h2>
+            <div class="concept-map">
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot political"></div>
+                        <span>政治概念 (18个)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot philosophical"></div>
+                        <span>哲学基础 (12个)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot critical"></div>
+                        <span>批判概念 (12个)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot human"></div>
+                        <span>人的条件 (12个)</span>
+                    </div>
+                </div>
+
+                <div class="concept-cloud">
+                    <!-- Core Political -->
+                    <a href="index.html" class="concept-node political large">Action</a>
+                    <a href="index.html" class="concept-node political large">Power</a>
+                    <a href="index.html" class="concept-node political large">Public</a>
+                    <a href="index.html" class="concept-node political large">Plurality</a>
+                    <a href="index.html" class="concept-node political medium">Freedom</a>
+                    <a href="index.html" class="concept-node political medium">Speech</a>
+                    <a href="index.html" class="concept-node political medium">Democracy</a>
+                    <a href="index.html" class="concept-node political medium">Citizenship</a>
+                    <a href="index.html" class="concept-node political small">Equality</a>
+                    <a href="index.html" class="concept-node political small">Law</a>
+                    <a href="index.html" class="concept-node political small">Togetherness</a>
+                    <a href="index.html" class="concept-node political small">Courage</a>
+
+                    <!-- Philosophical -->
+                    <a href="index.html" class="concept-node philosophical large">Natality</a>
+                    <a href="index.html" class="concept-node philosophical large">Thinking</a>
+                    <a href="index.html" class="concept-node philosophical large">Judgment</a>
+                    <a href="index.html" class="concept-node philosophical medium">Imagination</a>
+                    <a href="index.html" class="concept-node philosophical medium">Stories</a>
+                    <a href="index.html" class="concept-node philosophical medium">History</a>
+                    <a href="index.html" class="concept-node philosophical small">Objectivity</a>
+                    <a href="index.html" class="concept-node philosophical small">Beginnings</a>
+                    <a href="index.html" class="concept-node philosophical small">Comprehension</a>
+
+                    <!-- Critical -->
+                    <a href="index.html" class="concept-node critical large">Totalitarianism</a>
+                    <a href="index.html" class="concept-node critical large">Violence</a>
+                    <a href="index.html" class="concept-node critical large">Evil</a>
+                    <a href="index.html" class="concept-node critical medium">Bureaucracy</a>
+                    <a href="index.html" class="concept-node critical medium">Alienation</a>
+                    <a href="index.html" class="concept-node critical medium">Technology</a>
+                    <a href="index.html" class="concept-node critical small">Thoughtlessness</a>
+                    <a href="index.html" class="concept-node critical small">Reification</a>
+                    <a href="index.html" class="concept-node critical small">Superfluity</a>
+
+                    <!-- Human Condition -->
+                    <a href="index.html" class="concept-node human large">Labor</a>
+                    <a href="index.html" class="concept-node human large">Work</a>
+                    <a href="index.html" class="concept-node human medium">Humanity</a>
+                    <a href="index.html" class="concept-node human medium">Creativity</a>
+                    <a href="index.html" class="concept-node human medium">Play</a>
+                    <a href="index.html" class="concept-node human small">Metabolism</a>
+                    <a href="index.html" class="concept-node human small">Mortality</a>
+                    <a href="index.html" class="concept-node human small">Solitude</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Concept Browser (from index1) -->
+        <section class="section" id="concept-browser">
+            <h2 class="section-title">🔍 交互式概念浏览器</h2>
+            <p style="margin-bottom: 1.5rem; color: #666;">搜索、筛选并深入探索54个核心概念</p>
+
+            <!-- Search Box -->
+            <div style="max-width: 600px; margin: 0 auto 2rem;">
+                <input type="text" id="conceptSearch" placeholder="搜索概念... (例如: Action, Power, 自由)"
+                       style="width: 100%; padding: 1rem 1.5rem; font-size: 1rem; border: 2px solid var(--border-color); border-radius: 30px;
+                              background: white; font-family: inherit; transition: all 0.3s;"
+                       onfocus="this.style.borderColor='var(--accent-blue)'; this.style.boxShadow='0 0 0 3px rgba(36, 95, 115, 0.1)';"
+                       onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none';">
+            </div>
+
+            <!-- Category Filter -->
+            <div id="categoryFilter" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-bottom: 2rem;">
+                <button class="concept-filter-btn active" data-filter="all"
+                        style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: white; cursor: pointer;
+                               border-radius: 20px; transition: all 0.3s; font-family: inherit;"
+                        onmouseover="if(!this.classList.contains('active')) this.style.background='var(--hover-bg)';"
+                        onmouseout="if(!this.classList.contains('active')) this.style.background='white';">全部</button>
+                <button class="concept-filter-btn" data-filter="political"
+                        style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: white; cursor: pointer;
+                               border-radius: 20px; transition: all 0.3s; font-family: inherit;"
+                        onmouseover="if(!this.classList.contains('active')) this.style.background='var(--hover-bg)';"
+                        onmouseout="if(!this.classList.contains('active')) this.style.background='white';">政治概念</button>
+                <button class="concept-filter-btn" data-filter="philosophical"
+                        style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: white; cursor: pointer;
+                               border-radius: 20px; transition: all 0.3s; font-family: inherit;"
+                        onmouseover="if(!this.classList.contains('active')) this.style.background='var(--hover-bg)';"
+                        onmouseout="if(!this.classList.contains('active')) this.style.background='white';">哲学基础</button>
+                <button class="concept-filter-btn" data-filter="critical"
+                        style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: white; cursor: pointer;
+                               border-radius: 20px; transition: all 0.3s; font-family: inherit;"
+                        onmouseover="if(!this.classList.contains('active')) this.style.background='var(--hover-bg)';"
+                        onmouseout="if(!this.classList.contains('active')) this.style.background='white';">批判概念</button>
+                <button class="concept-filter-btn" data-filter="human"
+                        style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); background: white; cursor: pointer;
+                               border-radius: 20px; transition: all 0.3s; font-family: inherit;"
+                        onmouseover="if(!this.classList.contains('active')) this.style.background='var(--hover-bg)';"
+                        onmouseout="if(!this.classList.contains('active')) this.style.background='white';">人的条件</button>
+            </div>
+
+            <!-- Concepts Grid -->
+            <div id="interactiveConcepts" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                <!-- Concept cards will be loaded here -->
+            </div>
+
+            <div id="noResults" style="display: none; text-align: center; padding: 3rem; color: #666;">
+                <p>😕 没有找到匹配的概念</p>
+                <p>尝试使用其他关键词搜索</p>
+            </div>
+        </section>
+
+        <!-- Learning Paths -->
+        <section class="section" id="paths">
+            <h2 class="section-title">📚 推荐学习路径</h2>
+            <div class="paths-container">
+                <div class="path-card">
+                    <h3>🌱 入门路径：积极生活</h3>
+                    <p style="margin-bottom: 1rem; color: #666;">理解阿伦特的人类活动三分法</p>
+                    <ol class="path-steps">
+                        <li><strong>Labor (劳动)</strong> - 生命维持的循环</li>
+                        <li><strong>Work (工作)</strong> - 创造世界的耐久物</li>
+                        <li><strong>Action (行动)</strong> - 开启新开端</li>
+                        <li><a href="framework-vita-activa.html" style="color: var(--accent-blue); font-weight: bold;">Vita Activa → 查看框架详解</a></li>
+                    </ol>
+                </div>
+
+                <div class="path-card">
+                    <h3>🎯 核心路径：政治哲学</h3>
+                    <p style="margin-bottom: 1rem; color: #666;">把握阿伦特政治思想的核心</p>
+                    <ol class="path-steps">
+                        <li><a href="framework-vita-activa.html" style="color: var(--text-color);"><strong>Action</strong> - 政治的核心活动</a></li>
+                        <li><a href="framework-power.html" style="color: var(--text-color);"><strong>Power</strong> - 集体行动的涌现</a></li>
+                        <li><a href="framework-public.html" style="color: var(--text-color);"><strong>Public</strong> - 显现的空间</a></li>
+                        <li><a href="framework-plurality.html" style="color: var(--accent-blue); font-weight: bold;">Plurality → 查看框架详解</a></li>
+                    </ol>
+                </div>
+
+                <div class="path-card">
+                    <h3>⚠️ 批判路径：现代性诊断</h3>
+                    <p style="margin-bottom: 1rem; color: #666;">理解现代社会的危机</p>
+                    <ol class="path-steps">
+                        <li><strong>Totalitarianism</strong> - 全面统治</li>
+                        <li><strong>Evil</strong> - 平庸的恶</li>
+                        <li><strong>Alienation</strong> - 人与世界分离</li>
+                        <li><a href="framework-public.html" style="color: var(--accent-blue); font-weight: bold;">公共领域衰落 → 查看框架详解</a></li>
+                    </ol>
+                </div>
+
+                <div class="path-card">
+                    <h3>✨ 希望路径：黑暗时代的设计</h3>
+                    <p style="margin-bottom: 1rem; color: #666;">寻找改变的可能性</p>
+                    <ol class="path-steps">
+                        <li><a href="framework-natality.html" style="color: var(--text-color);"><strong>Natality</strong> - 开端的能力</a></li>
+                        <li><strong>Beginnings</strong> - 新的可能</li>
+                        <li><strong>Creativity</strong> - 创造新事物</li>
+                        <li><a href="framework-natality.html" style="color: var(--accent-blue); font-weight: bold;">诞生性详解 → 查看框架</a></li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Insights -->
+        <section class="section" id="insights">
+            <h2 class="section-title">💡 核心洞见</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h4>行动 vs 劳动 vs 工作</h4>
+                    <p>行动开启新开端，工作创造世界，劳动维持生命。现代性的危机是行动的衰落和劳动的霸权。</p>
+                </div>
+
+                <div class="insight-card">
+                    <h4>权力 vs 暴力</h4>
+                    <p>权力是集体行动的涌现，与暴力根本对立。当暴力绝对化时，权力就消失。</p>
+                </div>
+
+                <div class="insight-card">
+                    <h4>公共领域的衰落</h4>
+                    <p>社会的扩张——经济逻辑对政治领域的殖民——摧毁了公共领域。</p>
+                </div>
+
+                <div class="insight-card">
+                    <h4>平庸的恶</h4>
+                    <p>恶不是恶魔般的，而是平庸的；它来自不思考，不是来自邪恶的动机。</p>
+                </div>
+
+                <div class="insight-card">
+                    <h4>诞生性作为希望</h4>
+                    <p>每个行动都是一个开端，打破因果链条。极权主义无法完全摧毁开端能力。</p>
+                </div>
+
+                <div class="insight-card">
+                    <h4>复数性的政治</h4>
+                    <p>人既平等又独特。平等使我们能够沟通，独特使言说和行动有意义。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter Map -->
+        <section class="section" id="chapters">
+            <h2 class="section-title">📖 章节地图</h2>
+            <div class="chapter-map">
+                <div class="alphabet-nav">
+                    <button class="alphabet-btn active">全部</button>
+                    <button class="alphabet-btn">A</button>
+                    <button class="alphabet-btn">B</button>
+                    <button class="alphabet-btn">C</button>
+                    <button class="alphabet-btn">D</button>
+                    <button class="alphabet-btn">E</button>
+                    <button class="alphabet-btn">F</button>
+                    <button class="alphabet-btn">H</button>
+                    <button class="alphabet-btn">I</button>
+                    <button class="alphabet-btn">J</button>
+                    <button class="alphabet-btn">L</button>
+                    <button class="alphabet-btn">M</button>
+                    <button class="alphabet-btn">N</button>
+                    <button class="alphabet-btn">O</button>
+                    <button class="alphabet-btn">P</button>
+                    <button class="alphabet-btn">R</button>
+                    <button class="alphabet-btn">S</button>
+                    <button class="alphabet-btn">T</button>
+                    <button class="alphabet-btn">V</button>
+                </div>
+
+                <div class="chapter-list">
+                    <!-- A -->
+                    <div class="chapter-item"><div class="chapter-name">Action (行动)</div><div class="chapter-page">p.25-30</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Activism (行动主义)</div><div class="chapter-page">p.31-38</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Alienation (异化)</div><div class="chapter-page">p.39-42</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Animal Laborans (动物劳动者)</div><div class="chapter-page">p.43-46</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Animal Rationale (理性动物)</div><div class="chapter-page">p.47-52</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Anthropocentrism (人类中心主义)</div><div class="chapter-page">p.53-58</div></div>
+                    <!-- B -->
+                    <div class="chapter-item"><div class="chapter-name">Beginnings (开端)</div><div class="chapter-page">p.59-62</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Bourgeois (资产阶级)</div><div class="chapter-page">p.63-66</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Bureaucracy (官僚制)</div><div class="chapter-page">p.67-70</div></div>
+                    <!-- C -->
+                    <div class="chapter-item"><div class="chapter-name">Citizenship (公民身份)</div><div class="chapter-page">p.73-76</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Common Good (共同善)</div><div class="chapter-page">p.77-80</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Common Interests (共同利益)</div><div class="chapter-page">p.81-84</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Common World (共同世界)</div><div class="chapter-page">p.85-90</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Comprehension (理解)</div><div class="chapter-page">p.91-96</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Courage (勇气)</div><div class="chapter-page">p.97-100</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Creativity (创造力)</div><div class="chapter-page">p.101-106</div></div>
+                    <!-- D -->
+                    <div class="chapter-item"><div class="chapter-name">Democracy (民主)</div><div class="chapter-page">p.107-110</div></div>
+                    <!-- E -->
+                    <div class="chapter-item"><div class="chapter-name">Equality (平等)</div><div class="chapter-page">p.111-116</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Evil (恶)</div><div class="chapter-page">p.117-124</div></div>
+                    <!-- F -->
+                    <div class="chapter-item"><div class="chapter-name">Fabrication (制造)</div><div class="chapter-page">p.125-130</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Freedom (自由)</div><div class="chapter-page">p.131-138</div></div>
+                    <!-- H -->
+                    <div class="chapter-item"><div class="chapter-name">History (历史)</div><div class="chapter-page">p.139-142</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Homo Faber (制造者)</div><div class="chapter-page">p.143-146</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Human Rights (人权)</div><div class="chapter-page">p.147-150</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Humanity (人性)</div><div class="chapter-page">p.151-164</div></div>
+                    <!-- I -->
+                    <div class="chapter-item"><div class="chapter-name">Imagination (想象力)</div><div class="chapter-page">p.165-186</div></div>
+                    <div class="chapter-item"><div class="chapter-name">In-between (中介)</div><div class="chapter-page">p.187-192</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Instrumentality (工具性)</div><div class="chapter-page">p.193-198</div></div>
+                    <!-- L -->
+                    <div class="chapter-item"><div class="chapter-name">Labor (劳动)</div><div class="chapter-page">p.199-202</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Law (法律)</div><div class="chapter-page">p.203-208</div></div>
+                    <!-- M -->
+                    <div class="chapter-item"><div class="chapter-name">Metabolism (新陈代谢)</div><div class="chapter-page">p.209-212</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Mortality (有死性)</div><div class="chapter-page">p.213-216</div></div>
+                    <!-- N -->
+                    <div class="chapter-item"><div class="chapter-name">Natality (诞生性)</div><div class="chapter-page">p.217-226</div></div>
+                    <!-- O -->
+                    <div class="chapter-item"><div class="chapter-name">Objectivity (客观性)</div><div class="chapter-page">p.227-230</div></div>
+                    <!-- P -->
+                    <div class="chapter-item"><div class="chapter-name">Pariah (贱民)</div><div class="chapter-page">p.231-236</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Play (游戏)</div><div class="chapter-page">p.237-242</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Plurality (复数性)</div><div class="chapter-page">p.243-250</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Power (权力)</div><div class="chapter-page">p.251-254</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Private Realm (私人领域)</div><div class="chapter-page">p.255-260</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Public (公共领域)</div><div class="chapter-page">p.261-264</div></div>
+                    <!-- R -->
+                    <div class="chapter-item"><div class="chapter-name">Reification (物化)</div><div class="chapter-page">p.265-270</div></div>
+                    <!-- S -->
+                    <div class="chapter-item"><div class="chapter-name">Solitude (独处)</div><div class="chapter-page">p.271-276</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Speech (言说)</div><div class="chapter-page">p.277-280</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Spontaneity (自发性)</div><div class="chapter-page">p.281-284</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Stories (故事)</div><div class="chapter-page">p.285-288</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Superfluity (多余性)</div><div class="chapter-page">p.289-292</div></div>
+                    <!-- T -->
+                    <div class="chapter-item"><div class="chapter-name">Technology (技术)</div><div class="chapter-page">p.293-298</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Thought (思考)</div><div class="chapter-page">p.299-302</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Thoughtlessness (无思)</div><div class="chapter-page">p.303-306</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Togetherness (共处)</div><div class="chapter-page">p.307-310</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Totalitarianism (极权主义)</div><div class="chapter-page">p.311-318</div></div>
+                    <!-- V -->
+                    <div class="chapter-item"><div class="chapter-name">Violence (暴力)</div><div class="chapter-page">p.319-322</div></div>
+                    <div class="chapter-item"><div class="chapter-name">Vita Activa (积极生活)</div><div class="chapter-page">p.323-330</div></div>
+                </div>
+
+                <p style="text-align: center; margin-top: 2rem;">
+                    <a href="index.html" style="color: var(--accent-blue); text-decoration: none; font-weight: bold;">
+                        查看全部 54 个概念 →
+                    </a>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>《Designing in Dark Times: An Arendtian Lexicon》</strong></p>
+        <p>Edited by Virginia Tassinari & Eduardo Staszowski</p>
+        <p style="margin-top: 1rem; color: #999;">Interactive Knowledge Base Generated: January 2025</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="frameworks-index.html" style="color: var(--accent-blue);">5大核心框架</a> |
+            <a href="index.html" style="color: var(--accent-blue);">概念浏览器</a> |
+            <a href="知识图谱.html" style="color: var(--accent-blue);">知识图谱</a> |
+            <a href="overview.html" style="color: var(--accent-blue);">快速概览</a>
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Chapter Map - Expandable content
+        const chapterContents = {
+            "Action": "行动是阿伦特政治哲学的核心概念，指在公共领域中开启新开端的能力。行动是人类自由的最高体现，它不可预测、不可逆转，在复数性中展开。",
+            "Activism": "行动主义是政治参与的一种形式，体现了公民积极参与社会变革的意愿。阿伦特区分了真正的政治行动与单纯的行动主义。",
+            "Alienation": "异化指人与世界、自我、他人分离的状态。现代社会的危机在于异化的加剧，人们失去了与世界的联结。",
+            "Animal Laborans": "动物劳动者指处于劳动状态中的人，臣服于生命必然性，进行循环往复的劳动以维持生存。",
+            "Animal Rationale": "理性动物强调人作为理性思考存在的一面，但阿伦特认为这不足以概括人的全部政治存在。",
+            "Anthropocentrism": "人类中心主义是以人类为中心的世界观，阿伦特批判这种观念忽视了世界的独立性和他者的存在。",
+            "Beginnings": "开端指开启新事物的能力，与诞生性密切相关。每个行动都是一个新的开端，打破因果链条。",
+            "Bourgeois": "资产阶级代表私人领域的利益，追求财富积累和私人舒适，与公共领域的政治精神相对立。",
+            "Bureaucracy": "官僚制是行政管理的组织形式，以规则和效率为导向，阿伦特认为它摧毁了真正的政治。",
+            "Citizenship": "公民身份不仅是法律地位，更是政治参与的身份。公民拥有参与公共事务的权利和责任。",
+            "Common Good": "共同善是超越私利的善，需要公共讨论和共同决策来确定，不同于个人利益的总和。",
+            "Common Interests": "共同利益是共享的利益，但阿伦特警告不要将其简化为私人利益的集合。",
+            "Common World": "共同世界是人造的、连接世代的共享物，包括物质文化和制度，为人类生活提供稳定背景。",
+            "Comprehension": "理解是把握意义的能力，不同于单纯的认知。阿伦特强调理解需要想象力和判断力。",
+            "Courage": "勇气是行动的美德，意味着愿意承担行动的风险和不确定性，进入公共领域展示自我。",
+            "Creativity": "创造力是开启新事物的能力，与诞生性相关，体现为人类创造世界和改变世界的潜能。",
+            "Democracy": "民主是人民统治的政体，阿伦特认为真正的民主需要公民的直接参与，而非代议制。",
+            "Equality": "平等是人的基本平等，但阿伦特强调这不是指能力或地位的相等，而是作为政治存在的基本平等。",
+            "Evil": "恶在阿伦特看来不是恶魔般的，而是平庸的。它来自不思考，而非邪恶的动机。这就是'平庸的恶'。",
+            "Fabrication": "制造是工作的技术过程，遵循目的-手段逻辑，创造耐久的物品。",
+            "Freedom": "自由是行动的本质特征，不是意志的属性。自由只在行动中实现，在公共领域中展现。",
+            "History": "历史是人类事务的叙事，由行动编织而成。历史保存了人类行动的 memory，赋予其意义。",
+            "Homo Faber": "制造者指工作状态中的人，使用工具创造物品，遵循目的-手段逻辑。",
+            "Human Rights": "人权是人的基本权利，但阿伦特指出人权的悖论：当人被剥夺公民身份时，人权也无法保障。",
+            "Humanity": "人性/人类不是固定本质，而是在复数性中展现的。人通过行动和言说定义自己。",
+            "Imagination": "想象力是思考不在场事物的能力，是判断力的基础，使representative thinking成为可能。",
+            "In-between": "中介/之间指人际关系的空间，公共领域就存在于这个'之间'。",
+            "Instrumentality": "工具性是目的-手段关系，适用于工作和制造，但阿伦特警告不要将其应用于政治领域。",
+            "Labor": "劳动是维持生命的循环活动，服务于生命必然性，不产生耐久物。",
+            "Law": "法律是共同生活的规则，为公共领域提供稳定性，但不等于政治本身。",
+            "Metabolism": "新陈代谢是生命过程的交换，与劳动密切相关，维持个体和物种的生命。",
+            "Mortality": "有死性指死亡的必然性，与诞生性相对。它驱动着人类追求不朽的努力。",
+            "Natality": "诞生性是阿伦特哲学中最重要的概念，指人作为被开端的存在，具有开启新事物的能力。每个行动都是'奇迹'。",
+            "Objectivity": "客观性通过世界和复数性获得。事物在公共领域中显现，通过多元视角被确认。",
+            "Pariah": "贱民指被排斥在政治共同体之外的人，如难民、无国籍者。",
+            "Play": "游戏是自由的活动，与劳动的必然性和工作的目的性都不同。",
+            "Plurality": "复数性是人类既平等又独特的共存状态，是政治存在的根本条件。",
+            "Power": "权力是集体行动的涌现，不是个人财产。权力与暴力根本不同，需要复数性和言说。",
+            "Private Realm": "私人领域是隐匿的空间，属于家政管理，与公共领域相对。",
+            "Public": "公共领域是显现和行动的空间，不是政府的同义词。它在黑暗时代尤其重要。",
+            "Reification": "物化指将关系和过程转化为物，阿伦特批判现代社会中人和关系的物化。",
+            "Solitude": "独处是独自思考的状态，与孤独的隔离不同。独处是思考的条件。",
+            "Speech": "言说是行动的构成要素，与行动不可分割。言说揭示了行动者的身份。",
+            "Spontaneity": "自发性指自然的涌现，是行动的特征，不可预测和计划。",
+            "Stories": "故事是行动的自然产物，保存了行动的意义，使其免于被遗忘。",
+            "Superfluity": "多余性指存在的不必要，在极权主义中，人被降低为多余的存在。",
+            "Technology": "技术是人类能力的延伸，但阿伦特警告技术的工具理性对政治的威胁。",
+            "Thought": "思考是独自的精神活动，是人与自己的无声对话。思考不产生知识，但防止恶行。",
+            "Thoughtlessness": "无思是不思考的状态，是平庸的恶的基础。缺乏思考使人成为恶的帮凶。",
+            "Togetherness": "共处是共同存在的状态，是复数性的社会形式，为政治提供基础。",
+            "Totalitarianism": "极权主义是全面的统治，试图摧毁复数性和自发性，消灭公共领域。",
+            "Violence": "暴力是工具性的强制，与权力相反。暴力可以摧毁权力，但不能创造权力。",
+            "Vita Activa": "积极生活包含劳动、工作和行动三种活动，对应人的三种基本条件。现代性的危机是行动的衰落。"
+        };
+
+        // Add click handlers to chapter items
+        document.querySelectorAll('.chapter-item').forEach(item => {
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', function() {
+                const nameDiv = this.querySelector('.chapter-name');
+                const name = nameDiv.textContent.split('(')[0].trim();
+
+                // Check if content already exists
+                let contentDiv = this.querySelector('.chapter-content');
+
+                if (contentDiv) {
+                    // Toggle visibility
+                    if (contentDiv.style.display === 'none') {
+                        contentDiv.style.display = 'block';
+                        this.style.background = 'var(--hover-bg)';
+                    } else {
+                        contentDiv.style.display = 'none';
+                        this.style.background = 'var(--surface-color)';
+                    }
+                } else {
+                    // Create content div
+                    contentDiv = document.createElement('div');
+                    contentDiv.className = 'chapter-content';
+                    contentDiv.style.cssText = 'margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); color: #555; font-size: 0.9rem; line-height: 1.7; display: block;';
+
+                    const content = chapterContents[name] || '暂无详细描述。';
+                    contentDiv.innerHTML = `<p>${content}</p><button onclick="event.stopPropagation(); this.parentElement.style.display='none'; this.parentElement.parentElement.style.background='var(--surface-color)';" style="margin-top: 0.5rem; padding: 0.3rem 0.8rem; background: var(--accent-blue); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">收起</button>`;
+
+                    this.appendChild(contentDiv);
+                    this.style.background = 'var(--hover-bg)';
+                }
+            });
+        });
+
+        // Alphabet navigation
+        document.querySelectorAll('.alphabet-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.alphabet-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const letter = this.textContent.trim();
+                const chapters = document.querySelectorAll('.chapter-item');
+
+                chapters.forEach(chapter => {
+                    if (letter === '全部') {
+                        chapter.style.display = 'grid';
+                    } else {
+                        const name = chapter.querySelector('.chapter-name').textContent.trim();
+                        const firstLetter = name.charAt(0).toUpperCase();
+                        chapter.style.display = firstLetter === letter ? 'grid' : 'none';
+                    }
+                });
+            });
+        });
+
+        // Interactive Concept Browser
+        const conceptData = [
+            { name: "Action", category: "political", title: "行动", summary: "在公共领域中开启新开端的能力", content: "行动是阿伦特政治哲学的核心概念..." },
+            { name: "Power", category: "political", title: "权力", summary: "集体行动的涌现，与暴力根本不同", content: "权力不是个人财产，而是人们一起行动时产生的..." },
+            { name: "Public", category: "political", title: "公共领域", summary: "显现和行动的空间", content: "公共领域不是政府，而是显现的空间..." },
+            { name: "Plurality", category: "political", title: "复数性", summary: "既平等又独特的共存", content: "复数性是人类的根本处境..." },
+            { name: "Freedom", category: "political", title: "自由", summary: "行动的本质特征", content: "自由不是意志的属性，而是行动的能力..." },
+            { name: "Natality", category: "philosophical", title: "诞生性", summary: "开启新事物的能力", content: "诞生性是阿伦特哲学中最重要的概念之一..." },
+            { name: "Thinking", category: "philosophical", title: "思考", summary: "人与自己的无声对话", content: "思考是独自的精神活动..." },
+            { name: "Judgment", category: "philosophical", title: "判断", summary: "反思性判断，想象力的代表", content: "判断是思考能力的运用..." },
+            { name: "Totalitarianism", category: "critical", title: "极权主义", summary: "全面的统治", content: "极权主义是全面的统治，摧毁复数性..." },
+            { name: "Violence", category: "critical", title: "暴力", summary: "工具性的强制", content: "暴力与权力相反，是工具性的..." },
+            { name: "Evil", category: "critical", title: "恶", summary: "根本的恶", content: "恶不是恶魔般的，而是平庸的..." },
+            { name: "Labor", category: "human", title: "劳动", summary: "维持生命的循环活动", content: "劳动是维持生命过程的循环活动..." },
+            { name: "Work", category: "human", title: "工作", summary: "创造持久物", content: "工作是创造人工物的活动..." },
+            { name: "Humanity", category: "human", title: "人性", summary: "人的本质", content: "人性在复数性中展现..." }
+        ];
+
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        function renderConcepts() {
+            const container = document.getElementById('interactiveConcepts');
+            const noResults = document.getElementById('noResults');
+
+            if (!container) return;
+
+            let filtered = conceptData.filter(c => {
+                const matchesFilter = currentFilter === 'all' || c.category === currentFilter;
+                const matchesSearch = !searchTerm ||
+                    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    c.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    c.summary.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesFilter && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            noResults.style.display = 'none';
+
+            container.innerHTML = filtered.map(concept => `
+                <div class="concept-card" data-name="${concept.name}" onclick="toggleConcept('${concept.name}')"
+                     style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                            cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--border-color);"
+                     onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.1)'; this.style.borderColor='var(--accent-blue)';"
+                     onmouseout="if(!this.classList.contains('expanded')) { this.style.transform=''; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'; this.style.borderColor='var(--border-color)'; }">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                        <div style="font-size: 1.25rem; color: var(--accent-blue); font-weight: bold;">${concept.name} · ${concept.title}</div>
+                        <span style="font-size: 0.75rem; color: var(--accent-gold); background: rgba(180, 148, 80, 0.1); padding: 0.2rem 0.6rem; border-radius: 10px;">${getCategoryLabel(concept.category)}</span>
+                    </div>
+                    <div style="color: #666; font-size: 0.95rem; line-height: 1.6;">${concept.summary}</div>
+                    <div id="content-${concept.name}" style="display: none; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <p>${concept.content}</p>
+                        <button onclick="event.stopPropagation(); toggleConcept('${concept.name}');"
+                                style="float: right; background: var(--accent-red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-family: inherit; margin-top: 1rem;">收起</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryLabel(cat) {
+            const labels = { political: '政治概念', philosophical: '哲学基础', critical: '批判概念', human: '人的条件' };
+            return labels[cat] || cat;
+        }
+
+        function toggleConcept(name) {
+            const card = document.querySelector(`[data-name="${name}"]`);
+            const content = document.getElementById(`content-${name}`);
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                card.classList.add('expanded');
+            } else {
+                content.style.display = 'none';
+                card.classList.remove('expanded');
+                card.style.transform = '';
+                card.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+            }
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.concept-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.concept-filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'white';
+                    b.style.color = 'inherit';
+                });
+                this.classList.add('active');
+                this.style.background = 'var(--accent-blue)';
+                this.style.color = 'white';
+                currentFilter = this.dataset.filter;
+                renderConcepts();
+            });
+        });
+
+        // Search input
+        const searchInput = document.getElementById('conceptSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                searchTerm = this.value.trim();
+                renderConcepts();
+            });
+        }
+
+        // Initialize
+        renderConcepts();
+    </script>
+</body>
+</html>
